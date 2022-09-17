@@ -9,10 +9,12 @@ import warnings
 warnings.filterwarnings('ignore')
 from keybert import KeyBERT
 
-
 def parse_csv(csv_name, max_lines=None, exec_func=None):
     file = open(csv_name, 'r')
     Lines = file.readlines()[1:]
+
+    if exec_func is None:
+        exec_func = lambda x: 1
     
     # Para no exceder el límite propuesto
     count = 0
@@ -31,27 +33,22 @@ def parse_csv(csv_name, max_lines=None, exec_func=None):
         c_url = url[:-1]
         
         data = get_data_from_url(c_url)
-
-        if exec_func is not None:
-            exec_func(data)
         
         if data is not None:
+            exec_func(data)
             print(f'[{count}] {data["url"]}\n Title: {repr(data["title"])}\n Description: {repr(data["description"])}\n Keywords: {repr(data["keywords"])}')
         
             count += 1
         
+    db.commit()
     return
 
 def insert_into_db(data):
-    if data is None:
-        return
 
     id_data = db.data.insert(title=data["title"], description=data["description"])
 
     for keyword in data["keywords"]:
-        db.keywords.insert(id_data=id_data, keyword=keyword)
-
-    db.commit()
+        db.keywords.insert(id_data=id_data, keyword=keyword[0])
 
 def get_data_from_url(url):
     collected_data = {'url': url, 'title': None, 'description': None, 'keywords': []}
@@ -89,4 +86,4 @@ def get_data_from_url(url):
 
 if __name__ == "__main__":
     csv_name = './user-ct-test-collection-01.txt'
-    ht = parse_csv(csv_name, max_lines=1000)
+    ht = parse_csv(csv_name, max_lines=1000, exec_func=insert_into_db)
