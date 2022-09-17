@@ -36,9 +36,9 @@ const (
 )
 
 var (
-	addr   = flag.String("addr", "localhost:50051", "the address to connect to")
-	name   = flag.String("name", defaultName, "Name to greet")
-	search = flag.String("search", input)
+	addr    = flag.String("addr", "localhost:50051", "the address to connect to")
+	name    = flag.String("name", defaultName, "Name to greet")
+	message = flag.String("message", "", "str message")
 )
 
 func main() {
@@ -66,9 +66,6 @@ func main() {
 	}
 	log.Printf("Greeting: %s", r.GetMessage())
 
-	objlist, err := c.GetObjects(context.Background(), &pb.Message{})
-	log.Printf("book list: %v", objlist)
-
-	log.Printf("%s", r.Message)
-
+	objlist, err := c.GetObjects(context.Background(), &pb.Message{Message: *message})
+	log.Printf("object list: %v", objlist.GetItem())
 }

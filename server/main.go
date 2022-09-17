@@ -55,7 +55,7 @@ func (s *server) SayHelloAgain(ctx context.Context, in *pb.HelloRequest) (*pb.He
 
 func (s *server) getObjects(ctx context.Context, in *pb.Message) (*pb.SearchResponse, error) {
 
-	stmtOut, err := db.Prepare("SELECT * FROM data WHERE title = ? OR description = ? OR keywords = ?")
+	stmtOut, err := db.Prepare("SELECT * FROM data ,keywords WHERE title = ? OR description = ? OR (keywords.keyword = ? and keywords.id_data = data.id)")
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
