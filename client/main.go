@@ -62,7 +62,7 @@ func main() {
 
 			redisClient.Append(message, res)
 			elapsed := time.Since(start)
-			fmt.Printf("Tiempo de búsqueda en base de datos: %s \n", elapsed)
+			fmt.Printf("\nTiempo de búsqueda en base de datos: %s \n", elapsed)
 
 		} else {
 			start := time.Now()
@@ -71,7 +71,7 @@ func main() {
 
 			fmt.Print(nameInRedis)
 			elapsed := time.Since(start)
-			fmt.Printf("Tiempo de búsqueda en Redis: %s \n", elapsed)
+			fmt.Printf("\nTiempo de búsqueda en Redis: %s \n", elapsed)
 			continue
 		}
 
