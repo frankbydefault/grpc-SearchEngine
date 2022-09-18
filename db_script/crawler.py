@@ -87,4 +87,4 @@ def get_data_from_url(url):
 
 if __name__ == "__main__":
     csv_name = './user-ct-test-collection-01.txt'
-    ht = parse_csv(csv_name, max_lines=1000, exec_func=insert_into_db)
+    ht = parse_csv(csv_name, max_lines=200, exec_func=insert_into_db)

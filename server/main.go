@@ -38,6 +38,7 @@ var (
 )
 
 var db *sql.DB
+var err error
 
 // server is used to implement helloworld.GreeterServer.
 type server struct {
@@ -53,29 +54,38 @@ func (s *server) SayHelloAgain(ctx context.Context, in *pb.HelloRequest) (*pb.He
 	return &pb.HelloReply{Message: "Hello again " + in.GetName()}, nil
 }
 
-func (s *server) getObjects(ctx context.Context, in *pb.Message) (*pb.SearchResponse, error) {
+func (s *server) GetObjects(ctx context.Context, in *pb.Message) (*pb.SearchResponse, error) {
 
-	stmtOut, err := db.Prepare("SELECT * FROM data ,keywords WHERE title = ? OR description = ? OR (keywords.keyword = ? and keywords.id_data = data.id)")
+	str := fmt.Sprintf("%%%s%%", in.Message)
+
+	stmtOut, err := db.Prepare("SELECT * FROM data , keywords WHERE data.title like ? OR data.description like ? OR (keywords.keyword like ? and keywords.id_data = data.id);")
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error())
 	}
 
 	defer stmtOut.Close()
 
 	var res []*pb.Item
-	stmtOut.QueryRow(in.Message, in.Message, in.Message).Scan(&res)
+	err = stmtOut.QueryRow(str, str, str).Scan(&res)
+	if err != nil {
+		panic(err.Error())
+	}
 	return &pb.SearchResponse{Item: res}, nil
 }
 
 func main() {
 	flag.Parse()
 
-	db, err := sql.Open("mysql", "user:password@/dbname")
+	db, err = sql.Open("mysql", "searchengine:S34rch3r_3ng1n3@tcp(localhost:3306)/search_engine")
 	if err != nil {
 		panic(err)
 	}
 
-	defer db.Close()
+	if db == nil {
+		panic("AAAAAAAAAAAAAAAAAAA")
+	}
+
+	//defer db.Close()
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)

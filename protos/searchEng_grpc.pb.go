@@ -38,7 +38,7 @@ func NewSearchClient(cc grpc.ClientConnInterface) SearchClient {
 
 func (c *searchClient) GetObjects(ctx context.Context, in *Message, opts ...grpc.CallOption) (*SearchResponse, error) {
 	out := new(SearchResponse)
-	err := c.cc.Invoke(ctx, "/searchEng.Search/getObjects", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/searchEng.Search/GetObjects", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +110,7 @@ func _Search_GetObjects_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/searchEng.Search/getObjects",
+		FullMethod: "/searchEng.Search/GetObjects",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SearchServer).GetObjects(ctx, req.(*Message))
@@ -162,7 +162,7 @@ var Search_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*SearchServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "getObjects",
+			MethodName: "GetObjects",
 			Handler:    _Search_GetObjects_Handler,
 		},
 		{

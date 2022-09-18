@@ -6,7 +6,7 @@ option go_package = "protos/searchEng";
 
 service Search {
 
-rpc getObjects (Message) returns (SearchResponse);
+rpc GetObjects (Message) returns (SearchResponse);
 //test
 rpc SayHello (HelloRequest) returns (HelloReply) {}
 rpc SayHelloAgain (HelloRequest) returns (HelloReply) {}
@@ -26,8 +26,8 @@ message Item {
     int32 id = 1;
     string title = 2;
     string description = 3;
-    string keywords = 4;
-    string URL = 5;
+    string url = 4;
+    string keywords = 5;
 }
 
 message HelloRequest {

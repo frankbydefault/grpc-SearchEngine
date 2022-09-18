@@ -66,6 +66,9 @@ func main() {
 	}
 	log.Printf("Greeting: %s", r.GetMessage())
 
-	objlist, err := c.GetObjects(context.Background(), &pb.Message{Message: *message})
+	objlist, err := c.GetObjects(ctx, &pb.Message{Message: *message})
+	if err != nil {
+		log.Printf("%v", err)
+	}
 	log.Printf("object list: %v", objlist.GetItem())
 }
