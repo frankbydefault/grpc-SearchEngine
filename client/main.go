@@ -22,6 +22,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"time"
 
@@ -52,7 +53,7 @@ func main() {
 	c := pb.NewSearchClient(conn)
 
 	// Contact the server and print out its response.
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: *name})
 	if err != nil {
@@ -70,5 +71,8 @@ func main() {
 	if err != nil {
 		log.Printf("%v", err)
 	}
-	log.Printf("object list: %v", objlist.GetItem())
+
+	for _, item := range objlist.GetItem() {
+		fmt.Printf("%s %s\n", item.Title, item.Url)
+	}
 }

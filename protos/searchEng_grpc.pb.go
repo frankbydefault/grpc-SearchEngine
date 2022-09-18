@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SearchClient interface {
 	GetObjects(ctx context.Context, in *Message, opts ...grpc.CallOption) (*SearchResponse, error)
-	//test
+	// test
 	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
 	SayHelloAgain(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
 }
@@ -68,7 +68,7 @@ func (c *searchClient) SayHelloAgain(ctx context.Context, in *HelloRequest, opts
 // for forward compatibility
 type SearchServer interface {
 	GetObjects(context.Context, *Message) (*SearchResponse, error)
-	//test
+	// test
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
 	SayHelloAgain(context.Context, *HelloRequest) (*HelloReply, error)
 	mustEmbedUnimplementedSearchServer()

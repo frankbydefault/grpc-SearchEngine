@@ -58,7 +58,7 @@ func (s *server) GetObjects(ctx context.Context, in *pb.Message) (*pb.SearchResp
 
 	str := fmt.Sprintf("%%%s%%", in.Message)
 
-	stmtOut, err := db.Prepare("SELECT * FROM data , keywords WHERE data.title like ? OR data.description like ? OR (keywords.keyword like ? and keywords.id_data = data.id);")
+	stmtOut, err := db.Prepare("SELECT d.id, d.title, d.description, d.url, k.keyword FROM data AS d, keywords AS k WHERE d.title LIKE ? OR d.description LIKE ? OR (k.keyword LIKE ? AND k.id_data = d.id);")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -66,10 +66,28 @@ func (s *server) GetObjects(ctx context.Context, in *pb.Message) (*pb.SearchResp
 	defer stmtOut.Close()
 
 	var res []*pb.Item
-	err = stmtOut.QueryRow(str, str, str).Scan(&res)
+	rows, err := stmtOut.Query(str, str, str)
 	if err != nil {
 		panic(err.Error())
 	}
+
+	defer rows.Close()
+
+	i := 0
+
+	for rows.Next() && i < 10 {
+		var id int
+		var title string
+		var description sql.NullString
+		var url string
+		var keyword string
+		err = rows.Scan(&id, &title, &description, &url, &keyword)
+		if err != nil {
+			panic(err.Error())
+		}
+		res = append(res, &pb.Item{Id: int32(id), Title: title, Description: description.String, Url: url, Keywords: keyword})
+	}
+
 	return &pb.SearchResponse{Item: res}, nil
 }
 
@@ -79,10 +97,6 @@ func main() {
 	db, err = sql.Open("mysql", "searchengine:S34rch3r_3ng1n3@tcp(localhost:3306)/search_engine")
 	if err != nil {
 		panic(err)
-	}
-
-	if db == nil {
-		panic("AAAAAAAAAAAAAAAAAAA")
 	}
 
 	//defer db.Close()
