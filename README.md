@@ -29,7 +29,7 @@ sudo ./run_cluster.sh
 sudo docker exec -it myredis-0 sh
 redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 --cluster-replicas 1
 ```
-*Si se solicita confirmaci´on, escribir yes*
+*Si se solicita confirmación, escribir yes*
 
 * Para detener las instancias de Redis
 ```bash
@@ -53,3 +53,10 @@ go run client/main.go --message=[search string]
 
 Una vez se ejecuta el cliente, este solicitará un término de búsqueda.  
 El cliente buscará en el cache de Redis, si no se encuentra, se buscará en la base de datos y se almacenará en el cache.
+
+## Analizando cache
+Para analizar el cache basta con utilizar el comando
+```bash
+redis-cli -c -p 7000
+```
+Y luego utilizar *get* seguido de la llave para ver dónde se encuentra el valor en el cluster y obtener el valor o *set* para agregar un valor al cache, indicando en qué posición del cluster se encuentra.
