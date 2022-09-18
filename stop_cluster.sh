@@ -1,0 +1,1 @@
+docker stop myredis-0 myredis-1 myredis-2 myredis-3 myredis-4 myredis-5

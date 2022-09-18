@@ -29,6 +29,8 @@ func (s *server) GetObjects(ctx context.Context, in *pb.Message) (*pb.SearchResp
 
 	str := fmt.Sprintf("%%%s%%", in.Message)
 
+	log.Println("Received: ", in.Message, "Search: ", str)
+
 	stmtOut, err := db.Prepare("SELECT d.id, d.title, d.description, d.url, k.keyword FROM data AS d, keywords AS k WHERE d.title LIKE ? OR d.description LIKE ? OR (k.keyword LIKE ? AND k.id_data = d.id);")
 	if err != nil {
 		panic(err.Error())
