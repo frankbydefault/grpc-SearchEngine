@@ -25,7 +25,8 @@ func main() {
 	flag.Parse()
 
 	redisClient := redis.NewClusterClient(&redis.ClusterOptions{
-		Addrs: []string{"localhost:7000", "localhost:7001", "localhost:7002", "localhost:7003", "localhost:7004", "localhost:7005"},
+		Addrs:          []string{"localhost:7000", "localhost:7001", "localhost:7002", "localhost:7003", "localhost:7004", "localhost:7005"},
+		RouteByLatency: true,
 	})
 
 	_, err := redisClient.Ping().Result()
@@ -49,7 +50,10 @@ func main() {
 		nameInRedis, err := redisClient.Get(message).Result()
 
 		if err != nil || err == redis.Nil {
+			start := time.Now()
+
 			log.Println("No existe en redis")
+
 			res, err := HandleGRPC()
 
 			if err != nil {
@@ -57,9 +61,17 @@ func main() {
 			}
 
 			redisClient.Append(message, res)
+			elapsed := time.Since(start)
+			fmt.Printf("Tiempo de búsqueda en base de datos: %s \n", elapsed)
 
 		} else {
-			fmt.Println("Resultado de redis: ", nameInRedis)
+			start := time.Now()
+
+			log.Println("Encontrado en redis")
+
+			fmt.Print(nameInRedis)
+			elapsed := time.Since(start)
+			fmt.Printf("Tiempo de búsqueda en Redis: %s \n", elapsed)
 			continue
 		}
 
@@ -83,10 +95,13 @@ func HandleGRPC() (result string, err error) {
 
 	if err != nil {
 		log.Printf("No se detectaron coincidencias: %v", err)
+		return
 	}
 
 	if objlist.GetItem() == nil {
 		fmt.Printf("No se encontraron coincidencias! \n")
+		result = "No se encontraron coincidencias! \n"
+		return
 	}
 
 	for _, item := range objlist.GetItem() {
