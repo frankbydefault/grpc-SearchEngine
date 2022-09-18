@@ -39,16 +39,17 @@ def parse_csv(csv_name, max_lines=None, exec_func=None):
             print(f'[{count}] {data["url"]}\n Title: {repr(data["title"])}\n Description: {repr(data["description"])}\n Keywords: {repr(data["keywords"])}')
         
             count += 1
-        
-    db.commit()
+
     return
 
 def insert_into_db(data):
 
-    id_data = db.data.insert(title=data["title"], description=data["description"])
+    id_data = db.data.insert(title=data["title"], description=data["description"], url=data["url"])
 
     for keyword in data["keywords"]:
         db.keywords.insert(id_data=id_data, keyword=keyword[0])
+
+    db.commit()
 
 def get_data_from_url(url):
     collected_data = {'url': url, 'title': None, 'description': None, 'keywords': []}

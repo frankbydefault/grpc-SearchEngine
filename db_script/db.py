@@ -4,7 +4,8 @@ db = DAL('mysql://searchengine:S34rch3r_3ng1n3@localhost/search_engine', folder=
 
 db.define_table('data',
     Field('title', 'string'),
-    Field('description', 'string')
+    Field('description', 'string'),
+    Field('url', 'string')
 )
 
 db.define_table('keywords',
