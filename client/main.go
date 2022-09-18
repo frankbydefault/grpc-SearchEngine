@@ -17,8 +17,10 @@ import (
 )
 
 var (
-	addr    = flag.String("addr", "localhost:50051", "the address to connect to")
-	message = ""
+	addr     = flag.String("addr", "localhost:50051", "the address to connect to")
+	message  = ""
+	aciertos = 0
+	total    = 0
 )
 
 func main() {
@@ -28,6 +30,8 @@ func main() {
 		Addrs:          []string{"localhost:7000", "localhost:7001", "localhost:7002", "localhost:7003", "localhost:7004", "localhost:7005"},
 		RouteByLatency: true,
 	})
+
+	defer redisClient.Close()
 
 	_, err := redisClient.Ping().Result()
 
@@ -47,6 +51,8 @@ func main() {
 			return
 		}
 
+		total++
+
 		nameInRedis, err := redisClient.Get(message).Result()
 
 		if err != nil || err == redis.Nil {
@@ -65,6 +71,7 @@ func main() {
 			fmt.Printf("\nTiempo de búsqueda en base de datos: %s \n", elapsed)
 
 		} else {
+			aciertos++
 			start := time.Now()
 
 			log.Println("Encontrado en redis")
@@ -74,6 +81,8 @@ func main() {
 			fmt.Printf("\nTiempo de búsqueda en Redis: %s \n", elapsed)
 			continue
 		}
+
+		fmt.Println("\nPorcentaje de aciertos: ", (aciertos*100)/total, "%")
 
 	}
 
