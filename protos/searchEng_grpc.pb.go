@@ -23,9 +23,6 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SearchClient interface {
 	GetObjects(ctx context.Context, in *Message, opts ...grpc.CallOption) (*SearchResponse, error)
-	// test
-	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
-	SayHelloAgain(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
 }
 
 type searchClient struct {
@@ -45,32 +42,11 @@ func (c *searchClient) GetObjects(ctx context.Context, in *Message, opts ...grpc
 	return out, nil
 }
 
-func (c *searchClient) SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error) {
-	out := new(HelloReply)
-	err := c.cc.Invoke(ctx, "/searchEng.Search/SayHello", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *searchClient) SayHelloAgain(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error) {
-	out := new(HelloReply)
-	err := c.cc.Invoke(ctx, "/searchEng.Search/SayHelloAgain", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // SearchServer is the server API for Search service.
 // All implementations must embed UnimplementedSearchServer
 // for forward compatibility
 type SearchServer interface {
 	GetObjects(context.Context, *Message) (*SearchResponse, error)
-	// test
-	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
-	SayHelloAgain(context.Context, *HelloRequest) (*HelloReply, error)
 	mustEmbedUnimplementedSearchServer()
 }
 
@@ -80,12 +56,6 @@ type UnimplementedSearchServer struct {
 
 func (UnimplementedSearchServer) GetObjects(context.Context, *Message) (*SearchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetObjects not implemented")
-}
-func (UnimplementedSearchServer) SayHello(context.Context, *HelloRequest) (*HelloReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
-}
-func (UnimplementedSearchServer) SayHelloAgain(context.Context, *HelloRequest) (*HelloReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SayHelloAgain not implemented")
 }
 func (UnimplementedSearchServer) mustEmbedUnimplementedSearchServer() {}
 
@@ -118,42 +88,6 @@ func _Search_GetObjects_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Search_SayHello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HelloRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SearchServer).SayHello(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/searchEng.Search/SayHello",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchServer).SayHello(ctx, req.(*HelloRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Search_SayHelloAgain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HelloRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SearchServer).SayHelloAgain(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/searchEng.Search/SayHelloAgain",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchServer).SayHelloAgain(ctx, req.(*HelloRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Search_ServiceDesc is the grpc.ServiceDesc for Search service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -164,14 +98,6 @@ var Search_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetObjects",
 			Handler:    _Search_GetObjects_Handler,
-		},
-		{
-			MethodName: "SayHello",
-			Handler:    _Search_SayHello_Handler,
-		},
-		{
-			MethodName: "SayHelloAgain",
-			Handler:    _Search_SayHelloAgain_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -1,22 +1,3 @@
-/*
- *
- * Copyright 2015 gRPC authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
-// Package main implements a client for Greeter service.
 package main
 
 import (
@@ -32,19 +13,14 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const (
-	defaultName = "world"
-)
-
 var (
 	addr    = flag.String("addr", "localhost:50051", "the address to connect to")
-	name    = flag.String("name", defaultName, "Name to greet")
-	message = flag.String("message", "", "str message")
+	message = ""
 )
 
 func main() {
 	flag.Parse()
-	// Set up a connection to the server.
+
 	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
@@ -52,27 +28,31 @@ func main() {
 	defer conn.Close()
 	c := pb.NewSearchClient(conn)
 
-	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
-	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: *name})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	log.Printf("Greeting: %s", r.GetMessage())
 
-	r, err = c.SayHelloAgain(ctx, &pb.HelloRequest{Name: *name})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	log.Printf("Greeting: %s", r.GetMessage())
+	for {
+		fmt.Print("---------------------------------------------------------------\n")
+		fmt.Print("Engrese busqueda o 'exit' para salir: ")
+		fmt.Scanf("%s", &message)
 
-	objlist, err := c.GetObjects(ctx, &pb.Message{Message: *message})
-	if err != nil {
-		log.Printf("%v", err)
+		if message == "exit" {
+			return
+		}
+
+		objlist, err := c.GetObjects(ctx, &pb.Message{Message: *&message})
+		if err != nil {
+			log.Printf("No se detectaron coincidencias: %v", err)
+		}
+
+		if objlist.GetItem() == nil {
+			fmt.Printf("No se encontraron coincidencias! \n")
+		}
+
+		for _, item := range objlist.GetItem() {
+			fmt.Printf("{ Title: %s, Description: %s, Keywords: %s , Url: %s }\n", item.Title, item.Description, item.Keywords, item.Url)
+		}
+
 	}
 
-	for _, item := range objlist.GetItem() {
-		fmt.Printf("%s %s\n", item.Title, item.Url)
-	}
 }
