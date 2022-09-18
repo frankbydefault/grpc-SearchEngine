@@ -1,6 +1,6 @@
 from pydal import DAL, Field
 
-db = DAL('mysql://searchengine:S34rch3r_3ng1n3@localhost/search_engine')
+db = DAL('mysql://searchengine:S34rch3r_3ng1n3@localhost/search_engine', folder="databases")
 
 db.define_table('data',
     Field('title', 'string'),
