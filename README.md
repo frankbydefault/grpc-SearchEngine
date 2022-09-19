@@ -46,7 +46,7 @@ go run server/main.go
 
 * Iniciar cliente
 ```bash
-go run client/main.go --message=[search string]
+go run client/main.go
 ```
 
 ## Usando el cliente
