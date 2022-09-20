@@ -1,5 +1,11 @@
 # GoGRPC Searcher
 
+Este proyecto utiliza como motor de base de datos [MySQL](https://www.mysql.com/).  
+Para el almacenamiento de cache se utiliza [Redis](https://redis.io/), en un contenedor [Docker](https://www.docker.com/) con la imagen [redis:6.2-alpine3.16](https://hub.docker.com/_/redis).  
+Para la comunicación entre los servicios se utiliza [gRPC](https://grpc.io/), con su implementación en [Go](https://go.dev/).  
+Para la lectura de la información y su posterior almacenamiento en la base de datos se utiliza [Python](https://www.python.org/), con la librería [pyDAL](https://github.com/web2py/pydal).  
+Para la comunicación con Redis desde Go se utilizó [go-redis](https://github.com/go-redis/redis) y para la comunicación con MySQL desde Go se utilizó [go-sql-driver](https://github.com/go-sql-driver/mysql).
+
 ## Preparando el servicio
 
 * Para crear la base de datos, esto se hará con el motor MySQL.

@@ -79,7 +79,6 @@ func main() {
 			fmt.Print(nameInRedis)
 			elapsed := time.Since(start)
 			fmt.Printf("\nTiempo de búsqueda en Redis: %s \n", elapsed)
-			continue
 		}
 
 		fmt.Println("\nPorcentaje de aciertos: ", (aciertos*100)/total, "%")
